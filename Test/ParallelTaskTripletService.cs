@@ -20,7 +20,7 @@ namespace Test
         private void ReadText(string path)
         {
             if (string.IsNullOrEmpty(path)) throw new ArgumentNullException(nameof(path));
-            if (!File.Exists(path)) throw new ArgumentNullException(nameof(path));
+            if (!File.Exists(path)) throw new FileNotFoundException(nameof(path));
 
             Text = System.IO.File.ReadAllText(path);
         }
