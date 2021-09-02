@@ -29,8 +29,8 @@ namespace Test
         {
             ReadText(path);
             
-            char[] c = Text.ToLower().ToCharArray();
-            ConcurrentDictionary<string, int> cd = new ConcurrentDictionary<string, int>();
+            char[] c = Text.ToCharArray();
+            ConcurrentDictionary<string, int> cd = new ConcurrentDictionary<string, int>(StringComparer.OrdinalIgnoreCase);
             Parallel.For(0, c.Length - 2, (i) => {
                 if (char.IsLetter(c[i]) && char.IsLetter(c[i + 1]) && char.IsLetter(c[i + 2]))
                 {
@@ -44,7 +44,6 @@ namespace Test
 
         private List<string> GetTop10(ConcurrentDictionary<string, int> triplets)
         {
-           
             return triplets.OrderByDescending(t => t.Value).ThenByDescending(t=>t.Key).Take(10).Select(t => t.Key).ToList();
         }
 
