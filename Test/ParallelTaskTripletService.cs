@@ -28,37 +28,23 @@ namespace Test
         public List<string> GetTop10Triplets(string path)
         {
             ReadText(path);
-
-            CleanText();
-           
-
-            ConcurrentDictionary<string, int> triplets = new ConcurrentDictionary<string, int>();
-            var words = Text.ToLower().Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-
-
-            //var _l = new object();
-            Parallel.ForEach(words, word =>
-            {
-                var letters = word.ToCharArray();
-                if (letters.Length > 2)
+            
+            char[] c = Text.ToLower().ToCharArray();
+            ConcurrentDictionary<string, int> cd = new ConcurrentDictionary<string, int>();
+            Parallel.For(0, c.Length - 2, (i) => {
+                if (char.IsLetter(c[i]) && char.IsLetter(c[i + 1]) && char.IsLetter(c[i + 2]))
                 {
-                    for (int i = 0; i < letters.Length - 2; i++)
-                    {
-                        var triplet = string.Format("{0}{1}{2}", letters[i], letters[i + 1], letters[i + 2]);
-                        //lock (_l)
-                        //{
-                            triplets.AddOrUpdate(triplet, 1, (_, value) =>  value + 1);
-                       // }
-
-                    }
+                    var triplet = c[i].ToString() + c[i + 1].ToString() + c[i + 2].ToString();
+                    cd.AddOrUpdate(triplet, 1, (_, n) => n + 1);
                 }
             });
-          
-            return  GetTop10(triplets);
+
+            return  GetTop10(cd);
         }
 
         private List<string> GetTop10(ConcurrentDictionary<string, int> triplets)
         {
+           
             return triplets.OrderByDescending(t => t.Value).ThenByDescending(t=>t.Key).Take(10).Select(t => t.Key).ToList();
         }
 
